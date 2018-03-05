@@ -8,7 +8,7 @@ function initMap() {
 				lng: 0
 			},
 			zoom: 2,
-			//styles: style
+			styles: style
 		}
 	);
 }
