@@ -4,4 +4,5 @@
 .postcssrc.js
 .eslintignore
 .htmlhintrc
-/jasmine/
+/test/
+/.vscode/
