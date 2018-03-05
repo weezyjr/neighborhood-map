@@ -3,8 +3,22 @@ body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
+	font-family: 'Mina', sans-serif;
 }
 
 #map{
 	height: 100%;
+}
+
+main{
+	height: 100%;
+}
+
+.menu-title{
+	font-size: 1em;
+	display: inline;
+}
+
+.material-icons{
+	vertical-align: sub;
 }
