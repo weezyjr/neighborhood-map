@@ -12,23 +12,49 @@
 </head>
 
 <body>
-	<header>
+	<header data-bind="with: menu" class="header">
 		<nav class="navbar fixed-top navbar-dark bg-dark">
 			<div class="navbar-brand">
 				<a href="#" class="navbar-brand">
 					<i class="material-icons" data-bind="text: menu_Icon, click: toggleMenu"></i>
 				</a>
-				<h1 class="menu-title">Udacity Neighborhood Map</h1>
+				<h1 class="header-title">Udacity Neighborhood Map</h1>
 			</div>
 		</nav>
 	</header>
 
-	<main>
+	<aside data-bind="attr:{class: menu.menu_visibility}">
+
+		<div class="input-group">
+			<input type="search" class="filter-input form-control" placeholder="Search ...">
+			<span class="filter-btn">
+				<a href="#" class="navbar-brand">
+					<i class="material-icons">filter_list</i>
+				</a>
+			</span>
+		</div>
+
+		<hr>
+
+		<ul class="list-unstyled" data-bind="foreach: menu.menu_items">
+			<li>
+				<a href="#" data-bind="click: $parent.menuItemOnClick.bind($data)">
+					<div class="list-item">
+						<i class="material-icons">location_on</i>
+						<span data-bind="text: $data">item</span>
+					</div>
+				</a>
+			</li>
+		</ul>
+	</aside>
+
+	<main data-bind="attr:{class: menu.map_width}">
 		<section id="map"></section>
 	</main>
 
 	<script src="js/jQuery/jquery-3.3.1.min.js"></script>
 	<script src="js/KO/knockout-3.4.2.js"></script>
+	<script src="js/map-style.js"></script>
 	<script src="js/app.js"></script>
 	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-RKDbeGXYRdEb13dUoL9uAKLzlo2AHRE&v=3&callback=initMap"></script>
 </body>
