@@ -6,11 +6,19 @@ var markers = new Map();
 function makeMarkerIcon(markerColor) {
 	var markerImage = new google.maps.MarkerImage(
 		`http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|ffffff|40|_|%E2%80%A2`,
-		new google.maps.Size(21, 34),
+		new google.maps.Size(41, 64),
 		new google.maps.Point(0, 0),
-		new google.maps.Point(10, 34),
-		new google.maps.Size(21, 34));
+		new google.maps.Point(10, 64),
+		new google.maps.Size(41, 64));
 	return markerImage;
+}
+
+function bounceAnimation(marker) {
+	// Animate the marker for 2.8 sec
+	marker.setAnimation(google.maps.Animation.BOUNCE);
+	window.setTimeout(function () {
+		marker.setAnimation(null);
+	}, 2800);
 }
 
 function populateInfoWindow(marker, infoWindow, place) {
@@ -24,7 +32,11 @@ function populateInfoWindow(marker, infoWindow, place) {
 		.then(res => res.json())
 		// If there is no Image or there is no Connection
 		.catch(error => {
-			infoWindow.setContent(`<p> ${error} </p>
+			bounceAnimation(marker);
+			infoWindow.setContent(`
+
+			<p class="alert alert-danger" role="alert"> Ooops.. an error has occured while loading the photo <br>
+			Please Try refreshing the page :) </p>
 			<p>
 				<b>${place.title}</b>
 				/${place.type}/
@@ -33,6 +45,7 @@ function populateInfoWindow(marker, infoWindow, place) {
 		})
 		// Pop the infoWindow with an image related to the palace and show some info
 		.then(res => {
+			bounceAnimation(marker);
 			infoWindow.setContent(`<img src = ${res.results[0].urls.small} width="250">
 			<p>
 				<b>${place.title}</b>
@@ -85,6 +98,12 @@ function initMap() {
 			}
 		})(marker, infoWindow, place));
 
+		marker.addListener('mouseover', ((marker) => {
+			return function () {
+				bounceAnimation(marker);
+			}
+		})(marker));
+
 		// Fit the map to the new bounds
 		bounds.extend(marker.position);
 		map.fitBounds(bounds);
@@ -129,7 +148,6 @@ class Menu {
 		this.map_width('map-container-fluid');
 		//flag that the menu is closed
 		this.menu_opened = false;
-
 	}
 
 	toggleMenu() {
@@ -161,7 +179,7 @@ class ViewModel {
 	}
 
 	menuItemOnClick(place) {
-		if (map !== undefined && infoWindow !== undefined)
+		if (map && infoWindow && markers.get(place.title))
 			populateInfoWindow(markers.get(place.title), infoWindow, place);
 	}
 }
