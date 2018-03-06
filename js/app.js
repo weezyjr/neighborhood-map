@@ -1,16 +1,76 @@
 var map;
+var infoWindow;
+var markers = new Map();
+
+// This function is copied from the Udacity's Google Maps APIs course
+function makeMarkerIcon(markerColor) {
+	var markerImage = new google.maps.MarkerImage(
+		`http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|ffffff|40|_|%E2%80%A2`,
+		new google.maps.Size(21, 34),
+		new google.maps.Point(0, 0),
+		new google.maps.Point(10, 34),
+		new google.maps.Size(21, 34));
+	return markerImage;
+}
+
+function populateInfoWindow(marker, infoWindow, content) {
+	// Show the title when clicking on the marker
+	infoWindow.setContent(content);
+	infoWindow.open(map, marker);
+}
 
 function initMap() {
+	//Initialize the map
 	map = new google.maps.Map(
 		$('#map')[0], {
 			center: {
-				lat: 0,
-				lng: 0
+				lat: 31.190215,
+				lng: 29.913796
 			},
-			zoom: 2,
+			zoom: 13,
 			styles: style
 		}
 	);
+
+	// Initialize the current bounds of the map
+	var bounds = new google.maps.LatLngBounds();
+	// Initialize infoWindow
+	infoWindow = new google.maps.InfoWindow();
+	// Create styled marker icon
+	var defaultIcon = makeMarkerIcon();
+
+	for (const place of PLACES) {
+		// Get the position and title from PLACES array
+		var title = place.title;
+		var position = place.location;
+
+		// Create a marker per location.
+		var marker = new google.maps.Marker({
+			animation: google.maps.Animation.DROP,
+			position: position,
+			title: title,
+			map: map,
+			icon: defaultIcon
+		});
+		//	marker.setIcon(makeMarkerIcon('FFFF24'));
+
+		// Create Event Listner for each marker using IIFE
+		marker.addListener('click', ((marker, infoWindow, title) => {
+			return function () {
+				// Show the title when clicking on the marker
+				populateInfoWindow(marker, infoWindow, title);
+			}
+		})(marker, infoWindow, title));
+
+
+
+		// Fit the map to the new bounds
+		bounds.extend(marker.position);
+		map.fitBounds(bounds);
+
+		//Add the marker to markers Map
+		markers.set(title, marker);
+	}
 }
 
 class Menu {
@@ -72,13 +132,16 @@ class Menu {
 class ViewModel {
 	constructor() {
 		this.menu = new Menu();
-		this.menu.addItem('Item 1');
-		this.menu.addItem('Item 2');
-		this.menu.addItem('Item 3');
+
+		// Add each place to the menu
+		for (const place of PLACES) {
+			this.menu.addItem(place.title);
+		}
 	}
 
 	menuItemOnClick(data) {
-		console.log(data);
+		if (infoWindow !== undefined)
+			populateInfoWindow(markers.get(data), infoWindow, data);
 	}
 }
 
