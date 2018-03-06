@@ -1,3 +1,8 @@
+/* Assassin's Creed IV Map Style
+ * Credits goes to Sarah Frisk
+ * https://snazzymaps.com/style/72543/assassins-creed-iv
+ */
+
 var style = [{
 	"featureType": "all",
 	"elementType": "all",

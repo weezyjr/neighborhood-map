@@ -1,10 +1,17 @@
+//map related variables
 var map;
+var bounds;
 var infoWindow;
+
+//an array that holds each marker associated with its Place data
 var markers = ko.observableArray();
+
+//Error Context
 const ERROR_TEXT = `<p class="alert alert-danger" role="alert">
 Ooops.. an error has occured while loading <br>
 Please check your connection and try refreshing the page :) </p>`;
 
+// In case that the map didn't load
 function handleMapError() {
 	document.getElementById('map').innerHTML = ERROR_TEXT;
 }
@@ -20,14 +27,15 @@ function makeMarkerIcon(markerColor) {
 	return markerImage;
 }
 
+// Animate the marker for 2.8 sec
 function bounceAnimation(marker) {
-	// Animate the marker for 2.8 sec
 	marker.setAnimation(google.maps.Animation.BOUNCE);
 	window.setTimeout(function () {
 		marker.setAnimation(null);
 	}, 2800);
 }
 
+// Pops the info window out of the marker, holding Image and info about the place
 function populateInfoWindow(marker, infoWindow, place) {
 	// Fetch Image from unsplash based on place title and type
 	fetch(`https://api.unsplash.com/search/photos?page=1&per_page=1&query=${place.title}+${place.type}`, {
@@ -35,9 +43,11 @@ function populateInfoWindow(marker, infoWindow, place) {
 				Authorization: 'Client-ID 131a5b2f6dc9100da8fd3466bd93e4bd1eeaac8d5f2f021ca0efc8bd54b82b40',
 			}
 		})
-		// Turn the responce to json
+
+		//Convert responce to json
 		.then(res => res.json())
-		// If there is no Image or there is no Connection
+
+		// Pop Error + Some information related to the place
 		.catch(error => {
 			bounceAnimation(marker);
 			infoWindow.setContent(`
@@ -48,6 +58,7 @@ function populateInfoWindow(marker, infoWindow, place) {
 			</p>`);
 			infoWindow.open(map, marker);
 		})
+
 		// Pop the infoWindow with an image related to the palace and show some info
 		.then(res => {
 			bounceAnimation(marker);
@@ -60,8 +71,8 @@ function populateInfoWindow(marker, infoWindow, place) {
 		});
 }
 
+//Initialize the map
 function initMap() {
-	//Initialize the map
 	map = new google.maps.Map(
 		$('#map')[0], {
 			center: {
@@ -74,23 +85,18 @@ function initMap() {
 	);
 
 	// Initialize the current bounds of the map
-	var bounds = new google.maps.LatLngBounds();
+	bounds = new google.maps.LatLngBounds();
 	// Initialize infoWindow
 	infoWindow = new google.maps.InfoWindow();
 	// Create styled marker icon
-	var defaultIcon = makeMarkerIcon();
+	let defaultIcon = makeMarkerIcon();
 
 	for (const place of PLACES) {
-		// Get the position and title from PLACES array
-		var title = place.title;
-		var position = place.location;
-
 		// Create a marker per location.
-		var marker = new google.maps.Marker({
+		let marker = new google.maps.Marker({
 			animation: google.maps.Animation.DROP,
-			position: position,
-			title: title,
-			//	map: map,
+			position: place.location,
+			title: place.title,
 			icon: defaultIcon
 		});
 
@@ -102,7 +108,7 @@ function initMap() {
 			}
 		})(marker, infoWindow, place));
 
-		// bounce on mouseover
+		// bounce on mouse hover
 		marker.addListener('mouseover', ((marker) => {
 			return function () {
 				bounceAnimation(marker);
@@ -113,7 +119,7 @@ function initMap() {
 		bounds.extend(marker.position);
 		map.fitBounds(bounds);
 
-		//Add the marker to markers Map
+		//Add the marker to markers array assoiacted with place info
 		markers.push({
 			place: place,
 			marker: marker
@@ -191,5 +197,4 @@ class ViewModel {
 		}
 	}
 }
-
 ko.applyBindings(new ViewModel());
