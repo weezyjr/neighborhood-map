@@ -165,7 +165,9 @@ class ViewModel {
 		//filter the results depending on the query
 		this.filter = ko.computed(() => {
 			return ko.utils.arrayFilter(markers(), (item) => {
-				if (item.place.title.includes(this.query())) {
+				//filter for place title or type
+				if (item.place.title.toLowerCase().includes(this.query().toLowerCase()) ||
+					item.place.type.toLowerCase().includes(this.query().toLowerCase())) {
 					//show the filtered markers
 					item.marker.setMap(map);
 					//return the titles to be displayed in the menu
