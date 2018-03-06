@@ -1,6 +1,6 @@
 var map;
 var infoWindow;
-var markers = new Map();
+var markers = ko.observableArray();
 
 // This function is copied from the Udacity's Google Maps APIs course
 function makeMarkerIcon(markerColor) {
@@ -98,6 +98,7 @@ function initMap() {
 			}
 		})(marker, infoWindow, place));
 
+		// bounce on mouseover
 		marker.addListener('mouseover', ((marker) => {
 			return function () {
 				bounceAnimation(marker);
@@ -109,7 +110,10 @@ function initMap() {
 		map.fitBounds(bounds);
 
 		//Add the marker to markers Map
-		markers.set(title, marker);
+		markers.push({
+			place: place,
+			marker: marker
+		});
 	}
 }
 
@@ -123,8 +127,6 @@ class Menu {
 		this.menu_visibility = ko.observable('hide menu');
 		//set the map container width to 100%
 		this.map_width = ko.observable('map-container-fluid');
-
-		this.menu_items = ko.observableArray();
 	}
 
 	openMenu() {
@@ -136,7 +138,6 @@ class Menu {
 		this.map_width('map-container');
 		//flag that the menu is opened
 		this.menu_opened = true;
-
 	}
 
 	closeMenu() {
@@ -154,33 +155,20 @@ class Menu {
 		this.menu_opened ?
 			this.closeMenu() : this.openMenu();
 	}
-
-	addItem(str) {
-		this.menu_items.push(str);
-	}
-
-	removeItem(str) {
-		this.menu_items.pop(str);
-	}
-
-	emptyItems() {
-		this.menu_items([]);
-	}
 }
 
 class ViewModel {
 	constructor() {
 		this.menu = new Menu();
-
-		// Add each place to the menu
-		for (const place of PLACES) {
-			this.menu.addItem(place);
-		}
+		this.filter = ko.computed(() => {
+			let query = document.getElementById('filter-input').value;
+		});
 	}
 
-	menuItemOnClick(place) {
-		if (map && infoWindow && markers.get(place.title))
-			populateInfoWindow(markers.get(place.title), infoWindow, place);
+	menuItemOnClick(data) {
+		if (map && infoWindow) {
+			populateInfoWindow(data.marker, infoWindow, data.place);
+		}
 	}
 }
 

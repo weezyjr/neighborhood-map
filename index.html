@@ -27,7 +27,7 @@
 
 		<div class="input-group">
 			<input type="search" class="filter-input form-control" id="filter-input" placeholder="Search ...">
-			<span class="filter-btn">
+			<span class="filter-btn" data-bind="click: filter">
 				<a href="#" class="navbar-brand">
 					<i class="material-icons">filter_list</i>
 				</a>
@@ -36,12 +36,12 @@
 
 		<hr>
 
-		<ul class="list-unstyled" data-bind="foreach: menu.menu_items">
+		<ul class="list-unstyled" data-bind="foreach: markers">
 			<li>
 				<a href="#" data-bind="click: $parent.menuItemOnClick.bind($data)">
 					<div class="list-item">
 						<i class="material-icons">location_on</i>
-						<span data-bind="text: $data.title">item</span>
+						<span data-bind="text: $data.place.title">item</span>
 					</div>
 				</a>
 			</li>
