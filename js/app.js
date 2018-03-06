@@ -13,10 +13,33 @@ function makeMarkerIcon(markerColor) {
 	return markerImage;
 }
 
-function populateInfoWindow(marker, infoWindow, content) {
-	// Show the title when clicking on the marker
-	infoWindow.setContent(content);
-	infoWindow.open(map, marker);
+function populateInfoWindow(marker, infoWindow, place) {
+	// Fetch Image from unsplash based on place title and type
+	fetch(`https://api.unsplash.com/search/photos?page=1&per_page=1&query=${place.title}+${place.type}`, {
+			headers: {
+				Authorization: 'Client-ID 131a5b2f6dc9100da8fd3466bd93e4bd1eeaac8d5f2f021ca0efc8bd54b82b40',
+			}
+		})
+		// Turn the responce to json
+		.then(res => res.json())
+		// If there is no Image or there is no Connection
+		.catch(error => {
+			infoWindow.setContent(`<p> ${error} </p>
+			<p>
+				<b>${place.title}</b>
+				/${place.type}/
+			</p>`);
+			infoWindow.open(map, marker);
+		})
+		// Pop the infoWindow with an image related to the palace and show some info
+		.then(res => {
+			infoWindow.setContent(`<img src = ${res.results[0].urls.small} width="250">
+			<p>
+				<b>${place.title}</b>
+				/${place.type}/
+			</p>`);
+			infoWindow.open(map, marker);
+		});
 }
 
 function initMap() {
@@ -55,14 +78,12 @@ function initMap() {
 		//	marker.setIcon(makeMarkerIcon('FFFF24'));
 
 		// Create Event Listner for each marker using IIFE
-		marker.addListener('click', ((marker, infoWindow, title) => {
+		marker.addListener('click', ((marker, infoWindow, place) => {
 			return function () {
 				// Show the title when clicking on the marker
-				populateInfoWindow(marker, infoWindow, title);
+				populateInfoWindow(marker, infoWindow, place);
 			}
-		})(marker, infoWindow, title));
-
-
+		})(marker, infoWindow, place));
 
 		// Fit the map to the new bounds
 		bounds.extend(marker.position);
@@ -135,13 +156,13 @@ class ViewModel {
 
 		// Add each place to the menu
 		for (const place of PLACES) {
-			this.menu.addItem(place.title);
+			this.menu.addItem(place);
 		}
 	}
 
-	menuItemOnClick(data) {
-		if (infoWindow !== undefined)
-			populateInfoWindow(markers.get(data), infoWindow, data);
+	menuItemOnClick(place) {
+		if (map !== undefined && infoWindow !== undefined)
+			populateInfoWindow(markers.get(place.title), infoWindow, place);
 	}
 }
 
