@@ -26,8 +26,8 @@
 	<aside data-bind="attr:{class: menu.menu_visibility}">
 
 		<div class="input-group">
-			<input type="search" class="filter-input form-control" id="filter-input" placeholder="Search ...">
-			<span class="filter-btn" data-bind="click: filter">
+			<input type="search" data-bind="value: query" class="filter-input form-control" id="filter-input" placeholder="Search ...">
+			<span class="filter-btn">
 				<a href="#" class="navbar-brand">
 					<i class="material-icons">filter_list</i>
 				</a>
@@ -36,7 +36,7 @@
 
 		<hr>
 
-		<ul class="list-unstyled" data-bind="foreach: markers">
+		<ul class="list-unstyled" data-bind="foreach: filter">
 			<li>
 				<a href="#" data-bind="click: $parent.menuItemOnClick.bind($data)">
 					<div class="list-item">

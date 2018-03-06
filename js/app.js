@@ -34,8 +34,8 @@ function populateInfoWindow(marker, infoWindow, place) {
 		.catch(error => {
 			bounceAnimation(marker);
 			infoWindow.setContent(`
-
-			<p class="alert alert-danger" role="alert"> Ooops.. an error has occured while loading the photo <br>
+			<p class="alert alert-danger" role="alert">
+			Ooops.. an error has occured while loading the photo <br>
 			Please Try refreshing the page :) </p>
 			<p>
 				<b>${place.title}</b>
@@ -85,10 +85,9 @@ function initMap() {
 			animation: google.maps.Animation.DROP,
 			position: position,
 			title: title,
-			map: map,
+			//	map: map,
 			icon: defaultIcon
 		});
-		//	marker.setIcon(makeMarkerIcon('FFFF24'));
 
 		// Create Event Listner for each marker using IIFE
 		marker.addListener('click', ((marker, infoWindow, place) => {
@@ -159,10 +158,24 @@ class Menu {
 
 class ViewModel {
 	constructor() {
+		//create the menu
 		this.menu = new Menu();
+		//the input query observable
+		this.query = ko.observable('');
+		//filter the results depending on the query
 		this.filter = ko.computed(() => {
-			let query = document.getElementById('filter-input').value;
-		});
+			return ko.utils.arrayFilter(markers(), (item) => {
+				if (item.place.title.includes(this.query())) {
+					//show the filtered markers
+					item.marker.setMap(map);
+					//return the titles to be displayed in the menu
+					return item.place.title;
+				} else {
+					// Hide the unfiltered markers
+					item.marker.setMap(null);
+				}
+			});
+		})
 	}
 
 	menuItemOnClick(data) {
