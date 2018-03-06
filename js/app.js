@@ -93,6 +93,8 @@ function initMap() {
 	// Create styled marker icon
 	let defaultIcon = makeMarkerIcon();
 
+
+
 	for (const place of PLACES) {
 		// Create a marker per location.
 		let marker = new google.maps.Marker({
@@ -103,19 +105,15 @@ function initMap() {
 		});
 
 		// Create Event Listner for each marker using IIFE
-		marker.addListener('click', ((marker, infoWindow, place) => {
-			return function () {
-				// Show the title when clicking on the marker
-				populateInfoWindow(marker, infoWindow, place);
-			}
-		})(marker, infoWindow, place));
+		marker.addListener('click', function () {
+			populateInfoWindow(this, infoWindow, place);
+		});
 
 		// bounce on mouse hover
-		marker.addListener('mouseover', ((marker) => {
-			return function () {
-				bounceAnimation(marker);
+		marker.addListener('mouseover',function () {
+				bounceAnimation(this);
 			}
-		})(marker));
+		);
 
 		// Fit the map to the new bounds
 		bounds.extend(marker.position);
@@ -190,7 +188,7 @@ class ViewModel {
 					item.marker.setMap(null);
 				}
 			});
-		})
+		});
 	}
 
 	menuItemOnClick(data) {
