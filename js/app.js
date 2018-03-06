@@ -93,7 +93,12 @@ function initMap() {
 	// Create styled marker icon
 	let defaultIcon = makeMarkerIcon();
 
-
+	//just for function in loop problem
+	function markerOnClick(infoWindow, place) {
+		return function () {
+			populateInfoWindow(this, infoWindow, place);
+		};
+	}
 
 	for (const place of PLACES) {
 		// Create a marker per location.
@@ -105,15 +110,7 @@ function initMap() {
 		});
 
 		// Create Event Listner for each marker using IIFE
-		marker.addListener('click', function () {
-			populateInfoWindow(this, infoWindow, place);
-		});
-
-		// bounce on mouse hover
-		marker.addListener('mouseover',function () {
-				bounceAnimation(this);
-			}
-		);
+		marker.addListener('click', markerOnClick.call(this, infoWindow, place));
 
 		// Fit the map to the new bounds
 		bounds.extend(marker.position);
