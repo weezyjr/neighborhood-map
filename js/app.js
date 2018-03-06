@@ -20,10 +20,10 @@ function handleMapError() {
 function makeMarkerIcon(markerColor) {
 	var markerImage = new google.maps.MarkerImage(
 		`http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|ffffff|40|_|%E2%80%A2`,
-		new google.maps.Size(41, 64),
+		new google.maps.Size(31, 48),
 		new google.maps.Point(0, 0),
-		new google.maps.Point(10, 64),
-		new google.maps.Size(41, 64));
+		new google.maps.Point(10, 48),
+		new google.maps.Size(31, 48));
 	return markerImage;
 }
 
@@ -62,7 +62,7 @@ function populateInfoWindow(marker, infoWindow, place) {
 		// Pop the infoWindow with an image related to the palace and show some info
 		.then(res => {
 			bounceAnimation(marker);
-			infoWindow.setContent(`<img src = ${res.results[0].urls.small} width="250">
+			infoWindow.setContent(`<img src = ${res.results[0].urls.small} alt= ${place.title} width="250">
 			<p>
 				<b>${place.title}</b>
 				/${place.type}/
