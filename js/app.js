@@ -1,6 +1,13 @@
 var map;
 var infoWindow;
 var markers = ko.observableArray();
+const ERROR_TEXT = `<p class="alert alert-danger" role="alert">
+Ooops.. an error has occured while loading <br>
+Please check your connection and try refreshing the page :) </p>`;
+
+function handleMapError() {
+	document.getElementById('map').innerHTML = ERROR_TEXT;
+}
 
 // This function is copied from the Udacity's Google Maps APIs course
 function makeMarkerIcon(markerColor) {
@@ -34,9 +41,7 @@ function populateInfoWindow(marker, infoWindow, place) {
 		.catch(error => {
 			bounceAnimation(marker);
 			infoWindow.setContent(`
-			<p class="alert alert-danger" role="alert">
-			Ooops.. an error has occured while loading the photo <br>
-			Please Try refreshing the page :) </p>
+			${ERROR_TEXT}
 			<p>
 				<b>${place.title}</b>
 				/${place.type}/
