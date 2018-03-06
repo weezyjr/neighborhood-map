@@ -53,8 +53,9 @@ function populateInfoWindow(marker, infoWindow, place) {
 			infoWindow.setContent(`
 			${ERROR_TEXT}
 			<p>
-				<b>${place.title}</b>
+				<b>${place.title}</br>
 				/${place.type}/
+				<br> ${place.address}
 			</p>`);
 			infoWindow.open(map, marker);
 		})
@@ -66,6 +67,7 @@ function populateInfoWindow(marker, infoWindow, place) {
 			<p>
 				<b>${place.title}</b>
 				/${place.type}/
+				<br> ${place.address}
 			</p>`);
 			infoWindow.open(map, marker);
 		});
